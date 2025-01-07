@@ -1,19 +1,5 @@
-doctype html
-html(lang="en")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
-    title #{docTitle}
-    link(rel="stylesheet", href="/css/main.css")
+extends layouts/main-layout.pug
 
-  body
-    header.main-header
-      nav.main-header__nav
-        ul.main-header__item-list
-          li.main-header__item
-            a.active(href='/') Shop
-          li.main-header__item
-            a(href='/admin/add-product') Add Product
-
-    main
-      h1 Page not Found
+block content
+  main
+    h1 Page not Found
