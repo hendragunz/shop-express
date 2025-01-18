@@ -15,6 +15,10 @@ main {
   margin: auto;
 }
 
+main.centered {
+  text-align: center;
+}
+
 form {
   display: inline;
 }
