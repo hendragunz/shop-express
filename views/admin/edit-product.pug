@@ -7,23 +7,26 @@ block styles
 block content
   main
     form.product-form(action=(editing ? '/admin/edit-product' : '/admin/add-product') method='POST')
-      input(type="hidden", name="productId" value=product.id)
+      if editing
+        input(type="hidden", name="productId" value=product.id)
+
       .form-control
         label(for='title') Title
-        input#title(type='text' name='title' value=product.title)
+        input#title(type='text' name='title' value=(editing ? product.title : null))
 
       .form-control
         label(for='imageUrl') Image URL
-        input#imageUrl(type='text' name='imageUrl' value=product.imageUrl)
+        input#imageUrl(type='text' name='imageUrl' value=(editing ? product.imageUrl : null))
 
       .form-control
         label(for='price') Price
-        input#price(type='number' name='price' step="0.01" value=product.price)
+        input#price(type='number' name='price' step="0.01" value=(editing ? product.price : null))
 
       .form-control
         label(for='description') Description
         textarea#description(rows='5' name='description')
-          = product.description
+          if editing
+            = product.description
 
       button.btn(type='submit')
         if editing
