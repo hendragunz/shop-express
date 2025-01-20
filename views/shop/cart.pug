@@ -1,5 +1,7 @@
 extends ../layouts/main-layout.pug
 
+block styles
+  link(rel="stylesheet", href="/css/cart.css")
 
 block content
   main
@@ -15,6 +17,9 @@ block content
               input(type="hidden", name="productId" value=product.id)
               button(type="submit" class="btn") Delete
 
+        li.cart_item
+          form(action="/create-order", method="post")
+            button(type="submit" class="btn") Order Now!
 
     else
       h1 No Products in Cart!
