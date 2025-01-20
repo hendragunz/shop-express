@@ -23,7 +23,7 @@ const Product = sequelize.define(
       type: Sequelize.DataTypes.STRING,
       allowNull: false
     }
-  }, { sequelize }
+  }
 );
 
 module.exports = Product;

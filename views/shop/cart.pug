@@ -4,15 +4,15 @@ extends ../layouts/main-layout.pug
 block content
   main
     if products.length > 0
-      ul
-        each productLine in products
-          li
+      ul.cart__item-list
+        each product in products
+          li.cart__item
             p
-              = productLine.product.title
-              = ` (${productLine.qty})`
+              = product.title
+              = ` (${product.cartItem.quantity})`
 
             form(action="/cart-delete-item", method="post")
-              input(type="hidden", name="productId" value=productLine.product.id)
+              input(type="hidden", name="productId" value=product.id)
               button(type="submit" class="btn") Delete
 
 
