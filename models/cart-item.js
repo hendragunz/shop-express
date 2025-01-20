@@ -1,6 +1,5 @@
-const Sequelize = require("sequelize");
-
-const sequelize = require("../util/database");
+import Sequelize from "sequelize";
+import sequelize from "../util/database.js";
 
 const CartItem = sequelize.define("cartItem", {
   id: {
@@ -9,7 +8,7 @@ const CartItem = sequelize.define("cartItem", {
     primaryKey: true,
     allowNull: false,
   },
-  quantity: Sequelize.DataTypes.INTEGER
+  quantity: Sequelize.DataTypes.INTEGER,
 });
 
-module.exports = CartItem;
+export default CartItem;

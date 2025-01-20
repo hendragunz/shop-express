@@ -1,27 +1,30 @@
-const path    = require('path');
-const express = require("express");
+import path from 'path';
+import { dirname } from 'path';
+import express from 'express';
+
 const app     = express();
 
-const errorController = require('./controllers/error');
-const sequelize = require('./util/database');
-const Product = require('./models/product');
-const User = require('./models/user');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cart-item');
-const Order = require('./models/order');
-const OrderItem = require('./models/order-item');
+import * as errorController from "./controllers/error.js";
+import sequelize from './util/database.js';
+import Product from './models/product.js';
+import User from './models/user.js';
+import Cart from './models/cart.js';
+import CartItem from './models/cart-item.js';
+import Order from './models/order.js';
+import OrderItem from './models/order-item.js';
 
 app.set('view engine', 'pug');
 app.set('views', 'views');
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes  = require('./routes/shop');
+import adminRoutes from "./routes/admin.js";
+import shopRoutes from "./routes/shop.js";
 
 const port    = 8080;
-const bodyParser = require("body-parser");
+import bodyParser from 'body-parser';
 
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static("public"));
 
 app.use((req, res, next) => {
   User.findByPk(1)
