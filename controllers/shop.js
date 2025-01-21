@@ -7,6 +7,7 @@ export const getProducts = (req, res, next) => {
          prods: products,
          docTitle: "All products",
          path: "/",
+         isAuthenticated: req.session.isLoggedIn,
        });
      })
      .catch((err) => {
@@ -21,14 +22,18 @@ export const getProduct = (req, res, next) => {
       product: product,
       docTitle: product.title,
       path: "/products",
+      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
 
 export const getIndex = (req, res, next) => {
+  console.log(req.session);
+
   res.render("shop/index", {
     docTitle: "Welcome to My Shop",
     path: "/",
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -39,6 +44,7 @@ export const getCart = (req, res, next) => {
         docTitle: "Products in your Cart",
         path: "/cart",
         products: products,
+        isAuthenticated: req.session.isLoggedIn,
       });
     });
   });
@@ -134,6 +140,7 @@ export const getCheckout = (req, res, next) => {
   res.render("shop/ceckout", {
     docTitle: "Yay! Let's take it home",
     path: "/checkout",
+    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -145,6 +152,7 @@ export const getOrders = (req, res, next) => {
         docTitle: "Here is your orders",
         path: "/orders",
         orders: orders,
+        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));

@@ -1,8 +1,12 @@
 import path from 'path';
 import { dirname } from 'path';
 import express from 'express';
+import session from "express-session";
+import SequelizeSessionInit from "connect-session-sequelize";
 
-const app     = express();
+const app = express();
+
+const SequelizeStore = SequelizeSessionInit(session.Store);
 
 import * as errorController from "./controllers/error.js";
 import sequelize from './util/database.js';
@@ -26,6 +30,18 @@ import bodyParser from 'body-parser';
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("public"));
+app.use(
+  session({
+    secret: "my secret",
+    resave: false,
+    proxy: false,
+    checkExpirationInterval: 15 * 60 * 1000,
+    expiration: 24 * 60 * 60 * 1000,
+    store: new SequelizeStore({
+      db: sequelize
+    })
+  })
+);
 
 app.use((req, res, next) => {
   User.findByPk(1)
