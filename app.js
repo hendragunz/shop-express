@@ -18,6 +18,7 @@ app.set('views', 'views');
 
 import adminRoutes from "./routes/admin.js";
 import shopRoutes from "./routes/shop.js";
+import authRoutes from "./routes/auth.js"
 
 const port    = 8080;
 import bodyParser from 'body-parser';
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
+app.use(authRoutes);
 app.use(errorController.get404);
 
 Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
@@ -57,7 +59,13 @@ sequelize.sync()
     }
     return user;
   }).then(user => {
-    return user.createCart();
+    user.getCart()
+      .then(cart => {
+        if (!cart) {
+          return user.createCart();
+        }
+        return cart;
+      }).catch(err => console.log(err));
   }).then(cart => {
     app.listen(port, () => {
       console.log(`Example app listening on port ${port}`);
