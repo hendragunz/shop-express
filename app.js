@@ -32,7 +32,7 @@ import adminRoutes from "./routes/admin.js";
 import shopRoutes from "./routes/shop.js";
 import authRoutes from "./routes/auth.js"
 
-const port    = 8080;
+const port    = process.env.PORT || 8080;
 import bodyParser from 'body-parser';
 
 app.use(helmet());
@@ -48,8 +48,8 @@ app.use(
     checkExpirationInterval: 15 * 60 * 1000,
     expiration: 24 * 60 * 60 * 1000,
     store: new SequelizeStore({
-      db: sequelize
-    })
+      db: sequelize,
+    }),
   })
 );
 app.use(flash());
