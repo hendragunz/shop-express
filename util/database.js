@@ -1,11 +1,11 @@
 import Sequelize from 'sequelize';
 
 const sequelize = new Sequelize(
-  'express_shop',
-  'root',
-  'P@ssw0rd', {
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD, {
     dialect: 'mysql',
-    host: 'localhost'
+    host: process.env.DB_HOST
   }
 );
 

@@ -5,6 +5,10 @@ import session from "express-session";
 import SequelizeSessionInit from "connect-session-sequelize";
 import csrf from "csurf";
 import flash from "connect-flash";
+import helmet from "helmet";
+import compression from 'compression';
+import morgan from 'morgan';
+
 
 const app = express();
 
@@ -31,11 +35,14 @@ import authRoutes from "./routes/auth.js"
 const port    = 8080;
 import bodyParser from 'body-parser';
 
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.use(
   session({
-    secret: "my secret",
+    secret: process.env.SECRET_KEY,
     resave: false,
     proxy: false,
     checkExpirationInterval: 15 * 60 * 1000,
