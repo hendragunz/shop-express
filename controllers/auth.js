@@ -4,7 +4,7 @@ import User from "../models/user.js";
 export const getLogin = (req, res, next) => {
   res.render("auth/login", {
     docTitle: "Login",
-    path: "/login"
+    path: "/login",
   });
 };
 
@@ -46,6 +46,7 @@ export const postLogin = (req, res, next) => {
   User.findOne({ where: { email: email } })
     .then((user) => {
       if (!user) {
+        req.flash('error', 'Invalid email or password');
         return res.redirect('/login');
       }
 

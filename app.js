@@ -4,6 +4,7 @@ import express from 'express';
 import session from "express-session";
 import SequelizeSessionInit from "connect-session-sequelize";
 import csrf from "csurf";
+import flash from "connect-flash";
 
 const app = express();
 
@@ -31,7 +32,6 @@ const port    = 8080;
 import bodyParser from 'body-parser';
 
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static("public"));
 app.use(
   session({
@@ -45,12 +45,15 @@ app.use(
     })
   })
 );
+app.use(flash());
 
 app.use(csrfProtection);
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
+  res.locals.flash = req.flash();
+  console.log(res.locals.flash);
   next();
 });
 
