@@ -6,7 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --inspect app.js",
-    "debug": "nodemon app.js"
+    "debug": "nodemon app.js",
+    "start": "node app.js",
+    "start-server": "node app.js"
+  },
+  "engines": {
+    "node": "20.14.0"
   },
   "nodemonConfig": {
     "watch": [
