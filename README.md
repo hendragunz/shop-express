@@ -9,6 +9,6 @@ Some Information about this app:
 
 ## Demo Site
 
-https://todo.co
+https://simple-shop-e76ae927c47d.herokuapp.com
 
 
