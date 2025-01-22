@@ -4,16 +4,14 @@ import User from "../models/user.js";
 export const getLogin = (req, res, next) => {
   res.render("auth/login", {
     docTitle: "Login",
-    path: "/login",
-    isAuthenticated: false
+    path: "/login"
   });
 };
 
 export const getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
-    pageTitle: "Signup",
-    isAuthenticated: false
+    pageTitle: "Signup"
   });
 };
 
@@ -69,7 +67,6 @@ export const postLogin = (req, res, next) => {
 
 export const postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    console.log(err);
     res.redirect("/");
   });
 };

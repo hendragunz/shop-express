@@ -6,7 +6,6 @@ export const getProducts = (req, res, next) => {
       prods: products,
       docTitle: "Admin Products",
       path: "/admin/products",
-      isAuthenticated: req.session.isLoggedIn
     });
   });
 };
@@ -16,7 +15,6 @@ export const getAddProduct = (req, res, next) => {
     docTitle: "Add product",
     path: "/admin/add-product",
     editing: false,
-    isAuthenticated: req.session.isLoggedIn,
   });
 };
 
@@ -36,7 +34,6 @@ export const getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editing: editMode,
         product: products[0],
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => {

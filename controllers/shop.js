@@ -7,7 +7,6 @@ export const getProducts = (req, res, next) => {
          prods: products,
          docTitle: "All products",
          path: "/",
-         isAuthenticated: req.session.isLoggedIn,
        });
      })
      .catch((err) => {
@@ -22,32 +21,41 @@ export const getProduct = (req, res, next) => {
       product: product,
       docTitle: product.title,
       path: "/products",
-      isAuthenticated: req.session.isLoggedIn,
     });
   });
 };
 
 export const getIndex = (req, res, next) => {
-  console.log(req.session);
-
-  res.render("shop/index", {
-    docTitle: "Welcome to My Shop",
-    path: "/",
-    isAuthenticated: req.session.isLoggedIn,
-  });
+  Product.findAll()
+    .then((products) => {
+      res.render("shop/product-list", {
+        prods: products,
+        docTitle: "All products",
+        path: "/",
+      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 
 export const getCart = (req, res, next) => {
-  req.user.getCart().then((cart) => {
-    return cart.getProducts().then((products) => {
-      res.render("shop/cart", {
-        docTitle: "Products in your Cart",
-        path: "/cart",
-        products: products,
-        isAuthenticated: req.session.isLoggedIn,
+  req.user.getCart()
+    .then((cart) => {
+      if (!cart) {
+        return req.user.createCart();
+      }
+      return cart;
+    })
+    .then(cart => {
+      return cart.getProducts().then((products) => {
+        res.render("shop/cart", {
+          docTitle: "Products in your Cart",
+          path: "/cart",
+          products: products,
+        });
       });
     });
-  });
 };
 
 export const postCart = (req, res, next) => {
@@ -131,18 +139,17 @@ export const postOrder = (req, res, next) => {
       return fetchedCart.setProducts(null);
     })
     .then((result) => {
-      res.redirect("/order");
+      res.redirect("/orders");
     })
     .catch((err) => console.log(err));
 };
 
-export const getCheckout = (req, res, next) => {
-  res.render("shop/ceckout", {
-    docTitle: "Yay! Let's take it home",
-    path: "/checkout",
-    isAuthenticated: req.session.isLoggedIn,
-  });
-};
+// export const getCheckout = (req, res, next) => {
+//   res.render("shop/ceckout", {
+//     docTitle: "Yay! Let's take it home",
+//     path: "/checkout",
+//   });
+// };
 
 export const getOrders = (req, res, next) => {
   req.user
@@ -152,7 +159,6 @@ export const getOrders = (req, res, next) => {
         docTitle: "Here is your orders",
         path: "/orders",
         orders: orders,
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));

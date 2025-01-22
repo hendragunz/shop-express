@@ -3,10 +3,13 @@ import { dirname } from 'path';
 import express from 'express';
 import session from "express-session";
 import SequelizeSessionInit from "connect-session-sequelize";
+import csrf from "csurf";
 
 const app = express();
 
 const SequelizeStore = SequelizeSessionInit(session.Store);
+
+const csrfProtection = csrf();
 
 import * as errorController from "./controllers/error.js";
 import sequelize from './util/database.js';
@@ -43,12 +46,27 @@ app.use(
   })
 );
 
+app.use(csrfProtection);
+
 app.use((req, res, next) => {
-  User.findByPk(1)
-    .then(user => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+app.use((req, res, next) => {
+  if (!req.session.user) {
+    return next();
+  }
+
+  console.log(req.session);
+
+  User.findByPk(req.session.user.id)
+    .then((user) => {
       req.user = user;
       next();
-    });
+    })
+    .catch((err) => console.log(err));
 });
 
 app.use('/admin', adminRoutes);
@@ -67,22 +85,7 @@ Order.belongsToMany(Product, { through: OrderItem });
 
 
 sequelize.sync()
-  .then(result => {
-    return User.findByPk(1)
-  }).then(user => {
-    if (!user) {
-      return User.create({name: 'Hendra', email: 'hendragunz@codecampz.com'});
-    }
-    return user;
-  }).then(user => {
-    user.getCart()
-      .then(cart => {
-        if (!cart) {
-          return user.createCart();
-        }
-        return cart;
-      }).catch(err => console.log(err));
-  }).then(cart => {
+  .then(cart => {
     app.listen(port, () => {
       console.log(`Example app listening on port ${port}`);
     });

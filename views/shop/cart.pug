@@ -19,6 +19,7 @@ block content
 
         li.cart_item
           form(action="/create-order", method="post")
+            input(type="hidden" name="_csrf" value=csrfToken)
             button(type="submit" class="btn") Order Now!
 
     else
