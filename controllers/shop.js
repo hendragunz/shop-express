@@ -1,4 +1,5 @@
 import Product from "../models/product.js";
+import mg from "../util/mail.js";
 
 export const getProducts = (req, res, next) => {
    Product.findAll()
@@ -48,13 +49,25 @@ export const getCart = (req, res, next) => {
       return cart;
     })
     .then(cart => {
-      return cart.getProducts().then((products) => {
-        res.render("shop/cart", {
-          docTitle: "Products in your Cart",
-          path: "/cart",
-          products: products,
-        });
-      });
+      mg.messages
+        .create(process.env.MAILGUN_DOMAIN, {
+          from: `no-reply@${process.env.MAILGUN_DOMAIN}`,
+          to: [req.user.email],
+          subject: "Welcome to My Test Shop",
+          text: "Testing some Mailgun awesomness!",
+          html: "<h1>Your account successfully created</h1>",
+        })
+        .then((msg) => {
+          console.log(msg);
+          return cart.getProducts().then((products) => {
+            res.render("shop/cart", {
+              docTitle: "Products in your Cart",
+              path: "/cart",
+              products: products,
+            });
+          });
+        }) // logs response data
+        .catch((err) => console.error(err)); // logs any erro
     });
 };
 

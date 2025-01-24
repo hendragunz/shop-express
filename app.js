@@ -35,7 +35,7 @@ import authRoutes from "./routes/auth.js"
 const port    = process.env.PORT || 8080;
 import bodyParser from 'body-parser';
 
-app.use(helmet());
+// app.use(helmet());
 app.use(compression());
 app.use(morgan('combined'));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -47,6 +47,7 @@ app.use(
     proxy: false,
     checkExpirationInterval: 15 * 60 * 1000,
     expiration: 24 * 60 * 60 * 1000,
+    saveUninitialized: false,
     store: new SequelizeStore({
       db: sequelize,
     }),
