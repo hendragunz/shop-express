@@ -14,6 +14,8 @@ const User = sequelize.define(
     name: Sequelize.DataTypes.STRING,
     email: Sequelize.DataTypes.STRING,
     password: Sequelize.DataTypes.STRING,
+    resetToken: Sequelize.DataTypes.STRING,
+    resetTokenExpiration: Sequelize.DataTypes.DATE
   },
   {
     instanceMethods: {

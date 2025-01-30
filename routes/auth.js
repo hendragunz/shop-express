@@ -14,4 +14,12 @@ router.post("/signup", authRoutes.postSignup);
 
 router.post("/logout", authRoutes.postLogout);
 
+router.get("/reset-password", authRoutes.getResetPassword);
+
+router.post("/reset-password", authRoutes.postResetPassword);
+
+router.get("/reset-password/:resetToken", authRoutes.getNewPassword);
+
+router.post("/update-password", authRoutes.postUpdatePassword);
+
 export default router;
