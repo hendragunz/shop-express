@@ -6,6 +6,10 @@ block styles
 
 block content
   main
+    if errorMessage
+      .user-message.user-message--error
+        = errorMessage
+
     form.product-form(action=(editing ? '/admin/edit-product' : '/admin/add-product') method='POST')
       input(type="hidden" name="_csrf" value=csrfToken)
 
@@ -14,20 +18,20 @@ block content
 
       .form-control
         label(for='title') Title
-        input#title(type='text' name='title' value=(editing ? product.title : null))
+        input#title(type='text' name='title' value=(editing || hasError ? product.title : null) class=(validationErrors.find(e => e.path === 'title') ? 'invalid' : ''))
 
       .form-control
         label(for='imageUrl') Image URL
-        input#imageUrl(type='text' name='imageUrl' value=(editing ? product.imageUrl : null))
+        input#imageUrl(type='text' name='imageUrl' value=(editing || hasError ? product.imageUrl : null) class=(validationErrors.find(e => e.path === 'imageUrl') ? 'invalid' : ''))
 
       .form-control
         label(for='price') Price
-        input#price(type='number' name='price' step="0.01" value=(editing ? product.price : null))
+        input#price(type='number' name='price' step="0.01" value=(editing || haserror ? product.price : null) class=(validationErrors.find(e => e.path === 'price') ? 'invalid' : ''))
 
       .form-control
         label(for='description') Description
-        textarea#description(rows='5' name='description')
-          if editing
+        textarea#description(rows='5' name='description' class=(validationErrors.find(e => e.path === 'description') ? 'invalid' : ''))
+          if editing || hasError
             = product.description
 
       button.btn(type='submit')

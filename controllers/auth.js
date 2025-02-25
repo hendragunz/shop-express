@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import mg from "../util/mail.js";
 import { Op } from "sequelize";
+import { validationResult } from "express-validator";
 
 export const getLogin = (req, res, next) => {
   res.render("auth/login", {
@@ -14,7 +15,11 @@ export const getLogin = (req, res, next) => {
 export const getSignup = (req, res, next) => {
   res.render("auth/signup", {
     path: "/signup",
-    pageTitle: "Signup"
+    pageTitle: "Signup",
+    oldInput: {
+      email: '',
+    },
+    validationErrors: []
   });
 };
 
@@ -23,33 +28,41 @@ export const postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   const passwordConfirmation = req.body.passwordConfirmation;
+  const errors = validationResult(req, res, next);
 
-  User.findOne({ where: { email: email } })
-    .then((user) => {
-      if (user) {
-        req.flash('error', 'E-Mail already exists, please pick a different one or go to login');
-        return res.redirect('/login');
-      };
-      return bcrypt
-        .hash(password, 12)
-        .then((hash) => {
-          return User.create({ name: name, email: email, password: hash });
-        })
-        .then((user) => {
-          mg.messages.create(process.env.MAILGUN_DOMAIN, {
-            from: `no-reply@${process.env.MAILGUN_DOMAIN}`,
-            to: [user.email],
-            subject: "Welcome to My Test Shop",
-            text: "Testing some Mailgun awesomness!",
-            html: "<h1>Your account successfully created</h1>",
-          })
-          .then(result => {
-            return res.redirect("/login");
-          })
-          .catch(err => console.log(err));
-        });
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email
+      },
+      validationErrors: errors.array()
+    });
+  }
+
+  bcrypt
+    .hash(password, 12)
+    .then((hash) => {
+      return User.create({ name: name, email: email, password: hash });
     })
-    .catch((err) => console.log(err));
+    .then((user) => {
+      return res.redirect("/login");
+      // mg.messages.create(process.env.MAILGUN_DOMAIN, {
+      //   from: `no-reply@${process.env.MAILGUN_DOMAIN}`,
+      //   to: [user.email],
+      //   subject: "Welcome to My Test Shop",
+      //   text: "Testing some Mailgun awesomness!",
+      //   html: "<h1>Your account successfully created</h1>",
+      // })
+      // .then(result => {
+      //   return res.redirect("/login");
+      // })
+      // .catch(err => console.log(err));
+    });
 }
 
 export const postLogin = (req, res, next) => {

@@ -6,12 +6,16 @@ block styles
 
 block content
   main
-    form.login-form(action='/signup' method='POST')
+    if errorMessage
+      .user-message.user-message--error
+        = errorMessage
+
+    form.login-form(action='/signup' method='POST' novalidate)
       input(type="hidden" name="_csrf" value=csrfToken)
 
       .form-control
         label(for='email') Email
-        input#email(type='email' name='email')
+        input#email(type='email' name='email' value=oldInput.email class=(validationErrors.find(e => e.path === 'email') ? 'invalid' : ''))
 
       .form-control
         label(for='password') Password
@@ -19,7 +23,7 @@ block content
 
       .form-control
         label(for='password_confirmation') Password Confirmation
-        input#password_confirmation(type="password", name="password_confirmation")
+        input#password_confirmation(type="password", name="confirmPassword")
 
       button.btn(type='submit')
         | Signup
