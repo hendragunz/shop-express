@@ -89,7 +89,6 @@ export const postLogin = (req, res, next) => {
           req.flash("error", "Invalid password");
           res.redirect('/login');
         }).catch(err => {
-          console.log(err);
           req.flash("error", "Invalid authentication");
           res.redirect("/login");
         })
@@ -152,7 +151,11 @@ export const postResetPassword = (req, res, next) => {
           );
           res.redirect("/login");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          const error = new Error(err);
+          error.httpStatusCode = 500;
+          return next(error);
+        });
     })
 
 };
@@ -172,7 +175,11 @@ export const getNewPassword = (req, res, next) => {
         token: token,
       });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 }
 
 export const postUpdatePassword = (req, res, next) => {
@@ -201,6 +208,10 @@ export const postUpdatePassword = (req, res, next) => {
       req.flash("success", "Password updated successfully. You can now log in");
       res.redirect("/login");
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 
 }

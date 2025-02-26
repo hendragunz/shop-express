@@ -34,6 +34,7 @@ import authRoutes from "./routes/auth.js"
 
 const port    = process.env.PORT || 8080;
 import bodyParser from 'body-parser';
+import { error } from 'console';
 
 // app.use(helmet());
 app.use(compression());
@@ -83,7 +84,12 @@ app.use((req, res, next) => {
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
+app.get('/500', errorController.get500);
 app.use(errorController.get404);
+
+app.use((error, req, res, next) => {
+  res.status(500).render("500", { docTitle: "Internal Server Error" });
+})
 
 Product.belongsTo(User, {constraints: true, onDelete: 'CASCADE'});
 User.hasMany(Product);
