@@ -10,7 +10,7 @@ block content
       .user-message.user-message--error
         = errorMessage
 
-    form.product-form(action=(editing ? '/admin/edit-product' : '/admin/add-product') method='POST')
+    form.product-form(action=(editing ? '/admin/edit-product' : '/admin/add-product') method='POST' enctype="multipart/form-data")
       input(type="hidden" name="_csrf" value=csrfToken)
 
       if editing
@@ -20,9 +20,13 @@ block content
         label(for='title') Title
         input#title(type='text' name='title' value=(editing || hasError ? product.title : null) class=(validationErrors.find(e => e.path === 'title') ? 'invalid' : ''))
 
+      //- .form-control
+      //-   label(for='imageUrl') Image URL
+      //-   input#imageUrl(type='text' name='imageUrl' value=(editing || hasError ? product.imageUrl : null) class=(validationErrors.find(e => e.path === 'imageUrl') ? 'invalid' : ''))
+
       .form-control
-        label(for='imageUrl') Image URL
-        input#imageUrl(type='text' name='imageUrl' value=(editing || hasError ? product.imageUrl : null) class=(validationErrors.find(e => e.path === 'imageUrl') ? 'invalid' : ''))
+        label(for='image') Image
+        input#image(type='file' name='image')
 
       .form-control
         label(for='price') Price

@@ -21,6 +21,8 @@ router.post("/cart-delete-item", isAuth, shopRoutes.postCartDeleteProduct);
 
 router.get("/orders", isAuth, shopRoutes.getOrders);
 
+router.get("/orders/:orderId", isAuth, shopRoutes.getInvoice);
+
 router.post("/create-order", isAuth, shopRoutes.postOrder);
 
 export default router;

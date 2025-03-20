@@ -1,20 +1,22 @@
+import * as fs from "fs";
+import * as path from "path";
 import Product from "../models/product.js";
 import mg from "../util/mail.js";
 
 export const getProducts = (req, res, next) => {
-   Product.findAll()
-     .then((products) => {
-       res.render("shop/product-list", {
-         prods: products,
-         docTitle: "All products",
-         path: "/",
-       });
-     })
-     .catch((err) => {
-       const error = new Error(err);
-       error.httpStatusCode = 500;
-       return next(error);
-     });
+  Product.findAll()
+    .then((products) => {
+      res.render("shop/product-list", {
+        prods: products,
+        docTitle: "All products",
+        path: "/",
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 export const getProduct = (req, res, next) => {
@@ -45,14 +47,15 @@ export const getIndex = (req, res, next) => {
 };
 
 export const getCart = (req, res, next) => {
-  req.user.getCart()
+  req.user
+    .getCart()
     .then((cart) => {
       if (!cart) {
         return req.user.createCart();
       }
       return cart;
     })
-    .then(cart => {
+    .then((cart) => {
       return cart.getProducts().then((products) => {
         res.render("shop/cart", {
           docTitle: "Products in your Cart",
@@ -64,6 +67,7 @@ export const getCart = (req, res, next) => {
 };
 
 export const postCart = (req, res, next) => {
+  console.log(req);
   const productId = req.body.productId;
   let fetchedCart;
   let newQuantity = 1;
@@ -72,6 +76,7 @@ export const postCart = (req, res, next) => {
     .getCart()
     .then((cart) => {
       fetchedCart = cart;
+      console.log(cart);
       return cart.getProducts({ where: { id: productId } });
     })
     .then((products) => {
@@ -124,7 +129,6 @@ export const postCartDeleteProduct = (req, res, next) => {
       return next(error);
     });
 };
-
 
 export const postOrder = (req, res, next) => {
   let fetchedCart;
@@ -187,4 +191,34 @@ export const getOrders = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
+};
+
+export const getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  const invoiceName = "invoice-" + orderId + ".pdf";
+  const invoicePath = path.join("data", "invoices", invoiceName);
+
+  req.user
+    .getOrders({ where: { id: orderId }})
+    .then((orders) => {
+      const order = orders[0];
+
+      if (!order) {
+        return next(new Error("No order found."));
+      }
+
+      fs.readFile(invoicePath, (err, data) => {
+        if (err) {
+          return next(err);
+        }
+
+        res.setHeader("Content-Type", "application/pdf");
+        res.setHeader(
+          "Content-Disposition",
+          'inline; filename="' + invoiceName + '"'
+        );
+        res.send(data);
+      });
+    })
+    .catch((err) => next(err));
 };
