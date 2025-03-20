@@ -8,13 +8,15 @@ block content
       ul
         each order in orders
           li
-            h1= `# ${order.id}`
+            h1
+              = `# ${order.id} - `
+              a(href=`/orders/${order.id}`) Invoice
             ul
               each product in order.products
                 li
                   = product.title
-                  = ` (${product.orderItem.quantity}) - `
-                  a(href=`/orders/${order.id}`) Invoice
+                  = ` (${product.orderItem.quantity})`
+
 
 
     else
