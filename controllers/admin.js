@@ -1,5 +1,6 @@
 import Product from "../models/product.js";
 import { validationResult } from "express-validator";
+import { deleteFile } from "../util/file-helper.js";
 
 export const getProducts = (req, res, next) => {
   req.user.getProducts().then(products => {
@@ -88,6 +89,7 @@ export  const postEditProduct = (req, res, next) => {
       product.description = updatedDescription;
 
       if (image) {
+        deleteFile(product.imageUrl);
         product.imageUrl = "/" + image.path;
       }
 
