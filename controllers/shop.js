@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import PDFDocument from "pdfkit";
 import Product from "../models/product.js";
 import mg from "../util/mail.js";
 
@@ -207,18 +208,33 @@ export const getInvoice = (req, res, next) => {
         return next(new Error("No order found."));
       }
 
-      fs.readFile(invoicePath, (err, data) => {
-        if (err) {
-          return next(err);
-        }
-
+      (async () => {
+        const pdfDoc = new PDFDocument();
+        let totalPrice = 0;
         res.setHeader("Content-Type", "application/pdf");
         res.setHeader(
           "Content-Disposition",
           'inline; filename="' + invoiceName + '"'
         );
-        res.send(data);
-      });
+
+        const writeStream = fs.createWriteStream(invoicePath);
+        pdfDoc.pipe(writeStream);
+        pdfDoc.pipe(res);
+        pdfDoc.fontSize(26).text("Invoice", {
+          underline: true
+        });
+        pdfDoc.text("------------------------------------------")
+        const orderItems = await order.getOrderItems({ include: Product })
+
+        orderItems.forEach(orderItem => {
+          totalPrice += orderItem.quantity * orderItem.product.price;
+          pdfDoc.text(orderItem.product.title + ' - ' + orderItem.quantity + ' x $' + orderItem.product.price)
+        })
+
+        pdfDoc.text("------------------------------------------");
+        pdfDoc.text("Total Price: " + totalPrice);
+        pdfDoc.end();
+      })();
     })
     .catch((err) => next(err));
 };

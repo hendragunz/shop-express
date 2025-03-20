@@ -121,12 +121,14 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Order.belongsTo(User);
+Order.hasMany(OrderItem);
+OrderItem.belongsTo(Product);
 User.hasMany(Order);
 Order.belongsToMany(Product, { through: OrderItem });
 
 sequelize
   .sync()
-  .then((cart) => {
+  .then(() => {
     app.listen(port, () => {
       console.log(`Example app listening on port ${port}`);
     });
