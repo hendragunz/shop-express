@@ -1,0 +1,15 @@
+mixin pagination(currentPage, hasPreviousPage, previousPage, hasNextPage, nextPage, lastPage)
+  section.pagination
+    if currentPage !== 1 && previousPage !== 1
+      a(href=`?page=1`) 1
+
+    if hasPreviousPage
+      a(href=`?page=${previousPage}`)= previousPage
+
+    a.active(href=`?page=${currentPage}`)= currentPage
+
+    if hasNextPage
+      a(href=`?page=${nextPage}`)= nextPage
+
+    if lastPage !== currentPage && nextPage !== lastPage
+      a(href=`?page=${lastPage}`)= lastPage

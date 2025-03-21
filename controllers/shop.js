@@ -4,13 +4,32 @@ import PDFDocument from "pdfkit";
 import Product from "../models/product.js";
 import mg from "../util/mail.js";
 
+const ITEMS_PER_PAGE = 2;
+
 export const getProducts = (req, res, next) => {
-  Product.findAll()
+  const page = +req.query.page || 1;
+  let productsCount;
+
+  Product.count()
+    .then((results) => {
+      productsCount = results;
+      return Product.findAll({
+        limit: ITEMS_PER_PAGE,
+        offset: (page - 1) * ITEMS_PER_PAGE,
+      });
+    })
     .then((products) => {
       res.render("shop/product-list", {
         prods: products,
         docTitle: "All products",
         path: "/",
+        totalProducts: productsCount,
+        currentPage: page,
+        hasNextPage: ITEMS_PER_PAGE * page < productsCount,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(productsCount / ITEMS_PER_PAGE),
       });
     })
     .catch((err) => {
@@ -32,19 +51,35 @@ export const getProduct = (req, res, next) => {
 };
 
 export const getIndex = (req, res, next) => {
-  Product.findAll()
-    .then((products) => {
-      res.render("shop/product-list", {
-        prods: products,
-        docTitle: "All products",
-        path: "/",
-      });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+  const page = +req.query.page  || 1;
+  let productsCount;
+
+  Product.count().then((results) => {
+    productsCount = results;
+    return Product.findAll({
+      limit: ITEMS_PER_PAGE,
+      offset: (page - 1) * ITEMS_PER_PAGE,
     });
+  })
+  .then((products) => {
+    res.render("shop/product-list", {
+      prods: products,
+      docTitle: "All products",
+      path: "/",
+      totalProducts: productsCount,
+      currentPage: page,
+      hasNextPage: ITEMS_PER_PAGE * page < productsCount,
+      hasPreviousPage: page > 1,
+      nextPage: page + 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(productsCount / ITEMS_PER_PAGE)
+    });
+  })
+  .catch((err) => {
+    const error = new Error(err);
+    error.httpStatusCode = 500;
+    return next(error);
+  });
 };
 
 export const getCart = (req, res, next) => {

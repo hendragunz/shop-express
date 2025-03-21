@@ -1,6 +1,7 @@
 extends ../layouts/main-layout.pug
 
 include ../shared/add_to_cart
+include ../shared/pagination
 
 block styles
   link(rel="stylesheet", href="/css/product.css")
@@ -22,6 +23,8 @@ block content
               a(href=`/products/${product.id}` class="btn") Details
               +addToCart(product)
 
+
+      +pagination(currentPage, hasPreviousPage, previousPage, hasNextPage, nextPage, lastPage)
 
     else
       h1 No products
