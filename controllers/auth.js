@@ -50,19 +50,19 @@ export const postSignup = (req, res, next) => {
       return User.create({ name: name, email: email, password: hash });
     })
     .then((user) => {
-      return res.redirect("/login");
-      // mg.messages.create(process.env.MAILGUN_DOMAIN, {
-      //   from: `no-reply@${process.env.MAILGUN_DOMAIN}`,
-      //   to: [user.email],
-      //   subject: "Welcome to My Test Shop",
-      //   text: "Testing some Mailgun awesomness!",
-      //   html: "<h1>Your account successfully created</h1>",
-      // })
-      // .then(result => {
-      //   return res.redirect("/login");
-      // })
-      // .catch(err => console.log(err));
-    });
+      transporter
+        .sendMail({
+          from: `${process.env.MAIL_SENDER}`,
+          to: [user.email],
+          subject: "Welcome to My Test Shop",
+          text: "Testing some Mailgun awesomness!",
+          html: "<h1>Your account successfully created</h1>",
+        })
+        .then((results) => {
+          return res.redirect("/login");
+        })
+        .catch((err) => console.log(err));
+      });
 }
 
 export const postLogin = (req, res, next) => {
