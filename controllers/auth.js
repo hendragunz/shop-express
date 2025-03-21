@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
-import mg from "../util/mail.js";
+import transporter from "../util/mail.js";
 import { Op } from "sequelize";
 import { validationResult } from "express-validator";
 
@@ -137,13 +137,13 @@ export const postResetPassword = (req, res, next) => {
           return user.save();
         })
         .then((result) => {
-          mg.messages.create(process.env.MAILGUN_DOMAIN, {
-            from: `no-reply@${process.env.MAILGUN_DOMAIN}`,
+          transporter.sendMail({
+            from: `${process.env.MAIL_SENDER}`,
             to: [result.dataValues.email],
             subject: "Reset Password Request",
             text: `You requested a password reset. Click this link to reset your password: http://${req.headers.host}/reset-password/${result.dataValues.resetToken}`,
             html: `<h1>Reset Password Request</h1>
-            <p>Click this link to reset your password: <a href="http://${req.headers.host}/reset-password/${result.dataValues.resetToken}">Reset Password</a></p>`,
+              <p>Click this link to reset your password: <a href="http://${req.headers.host}/reset-password/${result.dataValues.resetToken}">Reset Password</a></p>`,
           });
           req.flash(
             "success",
